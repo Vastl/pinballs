@@ -5,14 +5,14 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 
 class Program
 {
     static async Task Main(string[] args)
     {
-        // 1. Package and run the pinball game
-        string pinballPath = Path.Combine(Directory.GetCurrentDirectory(), "pinnball", "pinball.exe");
+        // 1. Run the pinball game
+        // FIXME path
+        string pinballPath = Path.Combine(@"..\..\..\", "pinball", "pinball.exe");
 
         if (File.Exists(pinballPath))
         {
@@ -50,7 +50,7 @@ class Program
     {
         try
         {
-            string registryPath = @"Software\Microsoft\Plus!\Pinball\Space Cadet";
+            string registryPath = @"Software\Microsoft\Plus!\Pinball\SpaceCadet";
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey(registryPath))
             {
                 if (key != null)
@@ -73,8 +73,7 @@ class Program
     static async Task PostHighScoreAsync(string username, string highScore)
     {
         string url = "https://scoretodb-ceks756yha-uc.a.run.app";
-        var data = new { username = username, high_score = highScore };
-        string jsonData = JsonConvert.SerializeObject(data);
+        string jsonData = "{\"username\":\"" + username + "\",\"high_score\":\"" + highScore + "\"}";
 
         using (HttpClient client = new HttpClient())
         {
