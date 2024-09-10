@@ -1,0 +1,26 @@
+{
+	"pimmelbude": {
+		"players": {
+			"player1": {
+				"username": "niko",
+				"high_score": 150000,
+				"timestamp": "2024-09-10T10:30:00Z"
+			},
+			"player2": {
+				"username": "bütti",
+				"high_score": 130000,
+				"timestamp": "2024-09-10T11:00:00Z"
+			},
+			"player3": {
+				"username": "dennis",
+				"high_score": 170000,
+				"timestamp": "2024-09-10T09:45:00Z"
+			},
+			"player4": {
+				"username": "stabel",
+				"high_score": 120000,
+				"timestamp": "2024-09-10T10:15:00Z"
+			}
+		}
+	}
+}

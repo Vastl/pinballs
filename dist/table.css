@@ -1,0 +1,56 @@
+:root {
+	--main-bg-col: #8e9fa5;
+	--secondary-white: #f9f7e6;
+	--dark-blue: #1e232f;
+	--grad-light: #d7ddd4;
+	--grad-dark: #ccdad5;
+	--main-width: 70%;
+}
+
+/* Table styling */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 20px 0;
+	font-size: 2rem;
+	text-align: left;
+}
+
+/* Table header styling */
+table th {
+	background-color: #333;
+	color: white;
+	padding: 1rem 1.5rem;
+}
+
+/* Table body styling */
+table td {
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid var(--dark-blue);
+}
+
+table tr {
+	background-color: var(--secondary-white);
+	color: var(--dark-blue);
+}
+
+/* Hover effect on table rows */
+table tr:hover {
+	background-color: var(--dark-blue);
+	color: var(--secondary-white);
+	cursor: pointer;
+}
+
+/* Optional: Center-align the table on the page */
+#table {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Make table responsive */
+@media screen and (max-width: 600px) {
+	table {
+		font-size: 14px;
+	}
+}
