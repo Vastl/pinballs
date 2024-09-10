@@ -46,10 +46,12 @@ body {
 }
 main {
 	width: clamp(900px, 1200px, 80%);
-	height: 80%;
+	min-height: 900px;
 	color: var(--secondary-white);
+	padding: 4rem;
 	display: flex;
 	flex-direction: column;
+	gap: 1rem;
 	justify-content: space-around;
 	align-items: center;
 	text-align: center;
@@ -74,10 +76,9 @@ main {
 #table {
 	min-height: 50%;
 	min-width: var(--main-width);
-	z-index: 100;
 	background-color: var(--main-bg-col);
 	border-radius: 2rem;
-	padding: 1rem;
+	padding: 0.5rem 0;
 }
 
 /*
