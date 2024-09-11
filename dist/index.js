@@ -59,13 +59,14 @@ function fetchAndDisplayPlayerData() {
 			// Loop through the filtered data
 			sortedPlayers.forEach((player) => {
 				const timestamp = player.timestamp
-					? new Date(player.timestamp).toLocaleString() // Format timestamp to a readable date and time
-					: 'N/A'; // Provide a default value if timestamp is missing
+					? new Date(player.timestamp).toLocaleString()
+					: 'N/A';
+				const formattedHighScore = player.high_score.toLocaleString();
 
 				table += `<tr>
                             <td>${rank}</td>
                             <td>${player.username}</td>
-                            <td>${player.high_score}</td>
+                            <td>${formattedHighScore}</td>
                             <td>${timestamp}</td>
                           </tr>`;
 				rank++;
