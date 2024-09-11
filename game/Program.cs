@@ -9,9 +9,13 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        // UPDATED CODE: Extract pinball.exe from embedded resources
-        string pinballPath = Path.Combine(Path.GetTempPath(), "pinball.exe");
-        ExtractResource("Resources.pinball.exe", pinballPath);
+        // UPDATED CODE: Extract all pinball-related resources
+        string tempFolder = Path.GetTempPath();
+
+        // Extract all embedded resources in the pinball folder
+        ExtractAllResources(tempFolder);
+        string pinballPath = Path.Combine(tempFolder, "pinball.exe");
+
 
         // Ensure pinball.exe is extracted and exists
         if (File.Exists(pinballPath))
@@ -53,19 +57,36 @@ class Program
             // 3. Close the program after uploading the scores
             Console.WriteLine("Closing program...");
         }
-        catch (Exception ex)
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while running the program: {ex.Message}");
+            }
+        }
+        else
         {
-            Console.WriteLine($"An error occurred while running the program: {ex.Message}");
+            Console.WriteLine("Pinball executable not found. Make sure 'pinball.exe' is in the same directory.");
+        }
+        // Ensure there's always something to await, even if nothing asynchronous is needed
+        await Task.CompletedTask;
+    }
+
+    static void ExtractAllResources(string outputDir)
+    {
+        // Get all resource names
+        var resourceNames = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames();
+
+        foreach (var resourceName in resourceNames)
+        {
+            // Only extract resources in the "pinball" folder (if needed)
+            if (resourceName.StartsWith("game.pinball")) // Adjust based on your project setup
+            {
+                // Extract the resource to the output directory
+                string fileName = resourceName.Replace("game.pinball.", ""); // Remove prefix
+                string outputPath = Path.Combine(outputDir, fileName);
+                ExtractResource(resourceName, outputPath);
+            }
         }
     }
-    else
-    {
-        Console.WriteLine("Pinball executable not found. Make sure 'pinball.exe' is in the same directory.");
-    }
-    // Ensure there's always something to await, even if nothing asynchronous is needed
-    await Task.CompletedTask;
-}
-
     static void ExtractResource(string resourceName, string outputPath)
     {
         try
@@ -80,13 +101,13 @@ class Program
             // Create the output file stream and copy the resource content to it
             using FileStream fileStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write);
             stream.CopyTo(fileStream);
+            Console.WriteLine($"Extracted {resourceName} to {outputPath}");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error extracting resource: {ex.Message}");
         }
     }
-}
 
 #if WINDOWS
     static string? GetRegistryValue(string keyName)
@@ -136,3 +157,4 @@ class Program
         }
     }
 #endif
+}
