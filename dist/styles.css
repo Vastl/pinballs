@@ -9,12 +9,17 @@
 
 @font-face {
 	font-family: 'pixel';
-	src: url('/dist/assets/fs-tahoma-8px.otf');
+	src: url('/pimmelbude/assets/fs-tahoma-8px.otf');
 }
 
 @font-face {
 	font-family: 'seg';
-	src: url('/dist/assets/DSEG7Classic-Bold.woff2');
+	src: url('/pimmelbude/assets/DSEG7Classic-Bold.woff2');
+}
+
+@font-face {
+	font-family: 'tiny5';
+	src: url('/pimmelbude/assets/Tiny5-Regular.ttf');
 }
 
 /*
@@ -155,13 +160,12 @@ table {
 td:nth-child(2) {
 	font-size: 1.35em;
 }
-td:nth-child(1),
 td:nth-child(3) {
 	font-family: 'seg';
 }
 th:nth-child(4),
 td:nth-child(4) {
-	display: none;
+	/* display: none;*/
 }
 
 /* Table header styling */

@@ -5,6 +5,7 @@ admin.initializeApp();
 exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 	// Allow only POST requests
 	if (req.method !== 'POST') {
+		console.log('405 Method Not Allowed');
 		// 405 Method Not Allowed
 		return res.status(405).send(`
             <h1>405 - Method Not Allowed</h1>
@@ -18,6 +19,7 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 	// Validate the incoming data
 	if (!uuid || !username || !high_score || isNaN(high_score)) {
 		// 400 Bad Request
+		console.log('400 Bad Request');
 		return res.status(400).send(`
             <h1>400 - Bad Request</h1>
             <img src="https://http.cat/400" alt="400 - Bad Request">
@@ -25,7 +27,7 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 	}
 	try {
 		// Reference to the Realtime Database 'players' node
-		const playerRef = admin.database().ref(`/pimmelbude/testers/${uuid}`);
+		const playerRef = admin.database().ref(`/pimmelbude/players/${uuid}`);
 
 		// Write the high score to the database (update or insert)
 		await playerRef.set({
@@ -35,6 +37,7 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 			timestamp: admin.database.ServerValue.TIMESTAMP, // Add a server-side timestamp
 		});
 
+		console.log('200 OK');
 		// Send a success response with a cat for 200 OK
 		return res.status(200).send(`
             <h1>200 - Success</h1>
