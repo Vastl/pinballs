@@ -4,31 +4,48 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Pinballs</title>
-		<link rel="stylesheet" href="styles.css" />
 		<link rel="stylesheet" href="mobile_styles.css" />
+		<link rel="stylesheet" href="styles.css" />
 		<script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js"></script>
 		<script type="module" src="index.js"></script>
 		<link
 			rel="shortcut icon"
-			href="/pimmelbude/assets/pml.ico"
+			href="/dist/assets/pml.ico"
 			type="image/x-icon"
 		/>
 	</head>
 	<body>
+		<img
+			class="rocket hide-on-mobile"
+			src="/dist/assets/rocket.svg"
+			alt="rocket"
+		/>
 		<main>
-			<div id="titles">
-				<h1>SPACE CADET<br />HIGH SCORES</h1>
-				<h3>
-					<a href="/pimmelbude/assets/PMLBALL.zip" download
-						>DOWNLOAD PML PINBALLS</a
-					>
-				</h3>
-				<p>
-					ZIP-Ordner runterladen, entpacken, 'game.exe' ausführen!
-					Beim Schließen des Spiels wird der High Score automatisch
-					hochgeladen.
-				</p>
+			<div id="topper">
+				<img
+					class="moon hide-on-mobile"
+					src="/dist/assets/moon.svg"
+					alt="moon"
+				/>
+				<div id="titles">
+					<h1>SPACE CADET<br />HIGH SCORES</h1>
+					<h3 class="hide-on-mobile">
+						<a href="/pimmelbude/assets/PMLBALL.zip" download
+							>DOWNLOAD PML PINBALLS</a
+						>
+					</h3>
+					<p class="hide-on-mobile">
+						ZIP-Ordner runterladen, entpacken, 'game.exe' ausführen!
+						Beim Schließen des Spiels wird der High Score
+						automatisch hochgeladen.
+					</p>
+				</div>
+				<!--<img
+					class="moon hide-on-mobile"
+					src="/dist/assets/moon.svg"
+					alt="moon"
+				/>-->
 			</div>
 			<div id="search">
 				<input type="search" placeholder="Spieler filtern" />
@@ -42,5 +59,10 @@
 				<!--ADD TABLE WITH RANKING, PLAYER NAME, HIGH SCORES, TIMESTAMP HERE-->
 			</div>
 		</main>
+		<img
+			class="rocket hide-on-mobile"
+			src="/dist/assets/rocket.svg"
+			alt="rocket"
+		/>
 	</body>
 </html>

@@ -44,7 +44,7 @@ function fetchAndDisplayPlayerData() {
 		function displayFilteredPlayers(filterText = '') {
 			// Create table element
 			let table =
-				'<table><tr><th>Rank</th><th>Player Name</th><th>Score</th><th>Timestamp</th></tr>';
+				'<table><tr><th>Rank</th><th>Player Name</th><th>Score</th><th class="hide-on-mobile">Timestamp</th></tr>';
 
 			// Sort the players by high score and filter by player name
 			let rank = 1;
@@ -67,7 +67,7 @@ function fetchAndDisplayPlayerData() {
                             <td>${rank}</td>
                             <td>${player.username}</td>
                             <td>${formattedHighScore}</td>
-                            <td>${timestamp}</td>
+                            <td class="hide-on-mobile">${timestamp}</td>
                           </tr>`;
 				rank++;
 			});
