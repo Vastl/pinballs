@@ -13,10 +13,10 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 	}
 
 	// Extract the data from the request body
-	const { username, high_score } = req.body;
+	const { uuid, username, high_score } = req.body;
 
 	// Validate the incoming data
-	if (!username || !high_score || isNaN(high_score)) {
+	if (!uuid || !username || !high_score || isNaN(high_score)) {
 		// 400 Bad Request
 		return res.status(400).send(`
             <h1>400 - Bad Request</h1>
@@ -25,12 +25,11 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 	}
 	try {
 		// Reference to the Realtime Database 'players' node
-		const playerRef = admin
-			.database()
-			.ref(`/pimmelbude/testers/${username}`);
+		const playerRef = admin.database().ref(`/pimmelbude/testers/${uuid}`);
 
 		// Write the high score to the database (update or insert)
 		await playerRef.set({
+			uuid: uuid,
 			username: username,
 			high_score: parseInt(high_score), // Ensure high_score is stored as an integer
 			timestamp: admin.database.ServerValue.TIMESTAMP, // Add a server-side timestamp
