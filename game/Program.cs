@@ -1,8 +1,27 @@
 ﻿using System.Diagnostics;
 class Program
 {
-    static async Task Main(string[] args)
+    static async Task Main(string[] args) 
     {
+        #if WINDOWS
+        // Check if the UUID already exists in the registry
+        Guid? userUUID = GetUUIDFromRegistry();
+        
+        if (userUUID == null)
+        {
+            // If not, generate a new UUID
+            userUUID = Guid.NewGuid();
+            Console.WriteLine("Generated new UUID: " + userUUID.ToString());
+            
+            // Store the new UUID in the registry
+            StoreUUIDInRegistry(userUUID.Value);
+        }
+        else
+        {
+            Console.WriteLine("UUID found: " + userUUID.ToString());
+        }
+        #endif
+
         // UPDATED CODE: Extract all pinball-related resources
         string tempFolder = Path.GetTempPath();
 
@@ -15,42 +34,42 @@ class Program
         if (File.Exists(pinballPath))
         {
             try
-        {
-            // Run Pinball and wait for it to exit
-            using Process? pinballProcess = Process.Start(pinballPath);
-            if (pinballProcess != null)
             {
-                Console.WriteLine("Pinball started. Waiting for the game to close...");
-                pinballProcess.WaitForExit();  // Wait for the game to close
-                Console.WriteLine("Pinball closed.");
-            }
-            else
-            {
-                Console.WriteLine("Failed to start Pinball process.");
-                return;
-            }
+                // Run Pinball and wait for it to exit
+                using Process? pinballProcess = Process.Start(pinballPath);
+                if (pinballProcess != null)
+                {
+                    Console.WriteLine("Pinball started. Waiting for the game to close...");
+                    pinballProcess.WaitForExit();  // Wait for the game to close
+                    Console.WriteLine("Pinball closed.");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to start Pinball process.");
+                    return;
+                }
 
-            // 2. After Pinball closes, read the high scores (Windows platform only)
-        #if WINDOWS
-            string? username = GetRegistryValue("0.Name");
-            string? highScore = GetRegistryValue("0.Score");
+                // 2. After Pinball closes, read the high scores (Windows platform only)
+                #if WINDOWS
+                    string? username = GetRegistryValue("0.Name");
+                    string? highScore = GetRegistryValue("0.Score");
 
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(highScore))
-            {
-                Console.WriteLine($"Username: {username}, High score: {highScore}");
-                await PostHighScoreAsync(username, highScore);
-            }
-            else
-            {
-                Console.WriteLine("Could not retrieve username or high score.");
-            }
-            #else
-            Console.WriteLine("Registry access is not supported on this platform.");
-        #endif
+                    if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(highScore))
+                    {
+                        Console.WriteLine($"Username: {username}, High score: {highScore}");
+                        await PostHighScoreAsync(username, highScore);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Could not retrieve username or high score.");
+                    }
+                    #else
+                    Console.WriteLine("Registry access is not supported on this platform.");
+                #endif
 
-            // 3. Close the program after uploading the scores
-            Console.WriteLine("Closing program...");
-        }
+                // 3. Close the program after uploading the scores
+                Console.WriteLine("Closing program...");
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred while running the program: {ex.Message}");
@@ -60,6 +79,7 @@ class Program
         {
             Console.WriteLine("Pinball executable not found. Make sure 'pinball.exe' is in the same directory.");
         }
+        
         // Ensure there's always something to await, even if nothing asynchronous is needed
         await Task.CompletedTask;
     }
@@ -81,6 +101,7 @@ class Program
             }
         }
     }
+
     static void ExtractResource(string resourceName, string outputPath)
     {
         try
@@ -103,52 +124,86 @@ class Program
         }
     }
 
-#if WINDOWS
-    static string? GetRegistryValue(string keyName)
-    {
-        try
-        {
-            string registryPath = @"Software\\Microsoft\\Plus!\\Pinball\\SpaceCadet";
-            using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(registryPath)) // Make the key nullable
-            {
-                if (key != null)
-                {
-                    Object? value = key.GetValue(keyName); // Handle the value as nullable
-                    if (value != null)
-                    {
-                        return value.ToString();
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error accessing the registry: {ex.Message}");
-        }
-        return null; // Ensure a nullable return type
-    }
-
-    static async Task PostHighScoreAsync(string username, string highScore)
-    {
-        string url = "https://scoretodb-ceks756yha-uc.a.run.app";
-        string jsonData = "{\"username\":\"" + username + "\",\"high_score\":\"" + highScore + "\"}";
-
-        using (HttpClient client = new HttpClient())
+    #if WINDOWS
+        static string? GetRegistryValue(string keyName)
         {
             try
             {
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(url, content);
-
-                response.EnsureSuccessStatusCode();
-                string responseText = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"High score posted successfully: {responseText}");
+                string registryPath = @"Software\\Microsoft\\Plus!\\Pinball\\SpaceCadet";
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(registryPath)) // Make the key nullable
+                {
+                    if (key != null)
+                    {
+                        Object? value = key.GetValue(keyName); // Handle the value as nullable
+                        if (value != null)
+                        {
+                            return value.ToString();
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to post high score: {ex.Message}");
+                Console.WriteLine($"Error accessing the registry: {ex.Message}");
+            }
+            return null; // Ensure a nullable return type
+        }
+
+        static async Task PostHighScoreAsync(string username, string highScore)
+        {
+            string url = "https://scoretodb-ceks756yha-uc.a.run.app";
+            string jsonData = "{\"uuid\":\"" + userUUID.ToString() + "\",\"username\":\"" + username + "\",\"high_score\":\"" + highScore + "\"}";
+ 
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+
+                    response.EnsureSuccessStatusCode();
+                    string responseText = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"High score posted successfully: {responseText}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to post high score: {ex.Message}");
+                }
             }
         }
-    }
-#endif
+    #endif
+
+    #if WINDOWS
+
+
+    
+        // Store UUID in registry
+        static void StoreUUIDInRegistry(Guid userUUID)
+        {
+            const string registryPath = @"Software\MyApp\";
+            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(registryPath))
+            {
+                key.SetValue("UserUUID", userUUID.ToString());
+            }
+        }
+
+        // Retrieve UUID from registry
+        static Guid? GetUUIDFromRegistry()
+        {
+            const string registryPath = @"Software\MyApp\";
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(registryPath))
+            {
+                if (key != null)
+                {
+                    string? uuidString = key.GetValue("UserUUID") as string;
+                    if (!string.IsNullOrEmpty(uuidString))
+                    {
+                        return Guid.Parse(uuidString);
+                    }
+                }
+            }
+            return null;
+        }
+    #endif
 }

@@ -30,7 +30,7 @@ const database = getDatabase(app);
 // Function to fetch and display player data in real-time
 function fetchAndDisplayPlayerData() {
 	// Get the reference to the 'players' node
-	const playersRef = ref(database, 'pimmelbude/players');
+	const playersRef = ref(database, 'pimmelbude/testers');
 
 	// Listen for changes to the data in real-time
 	onValue(playersRef, (snapshot) => {

@@ -27,7 +27,7 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 		// Reference to the Realtime Database 'players' node
 		const playerRef = admin
 			.database()
-			.ref(`/pimmelbude/players/${username}`);
+			.ref(`/pimmelbude/testers/${username}`);
 
 		// Write the high score to the database (update or insert)
 		await playerRef.set({
