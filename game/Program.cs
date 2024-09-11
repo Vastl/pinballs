@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Win32;
+﻿using System.Diagnostics;
 class Program
 {
     static async Task Main(string[] args)
