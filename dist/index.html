@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Pinballs</title>
 		<link rel="stylesheet" href="styles.css" />
-		<link rel="stylesheet" href="table.css" />
+		<link rel="stylesheet" href="mobile_styles.css" />
 		<script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js"></script>
 		<script type="module" src="index.js"></script>
@@ -14,10 +14,24 @@
 		<main>
 			<div id="titles">
 				<h1>SPACE CADET<br />HIGH SCORES</h1>
-				<h3>3D PINBALLS</h3>
+				<h3>
+					<a href="/pimmelbude/assets/PML PINBALL.zip" download
+						>DOWNLOAD PML PINBALLS</a
+					>
+				</h3>
+				<p>
+					Funktioniert aktuell leider nur mit installiertem .net
+					Framework! :c Update soon!
+				</p>
+				<!--<p>
+					Einfach den .zip Ordner runterladen und entpacken.
+					Anschließend die darin enthaltene 'game.exe' Datei
+					ausführen. Beim Schließen des Spiels wird der High Score
+					anschließend automatisch hochgeladen.
+				</p>-->
 			</div>
 			<div id="search">
-				<input type="search" placeholder="Spielername" />
+				<input type="search" placeholder="Spieler filtern" />
 			</div>
 			<!--<div id="buttons">
 				<button>RANK</button>

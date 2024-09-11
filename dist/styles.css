@@ -9,7 +9,12 @@
 
 @font-face {
 	font-family: 'pixel';
-	src: url('/dist/assets/fs-tahoma-8px.otf/fs-tahoma-8px.otf');
+	src: url('/dist/assets/fs-tahoma-8px.otf');
+}
+
+@font-face {
+	font-family: 'seg';
+	src: url('/dist/assets/DSEG7Classic-Bold.woff2');
 }
 
 /*
@@ -75,7 +80,7 @@ main {
 }
 #table {
 	min-height: 50%;
-	min-width: var(--main-width);
+
 	background-color: var(--main-bg-col);
 	border-radius: 2rem;
 	padding: 0.5rem 0;
@@ -127,6 +132,9 @@ h1 {
 h3 {
 	font-size: 32px;
 }
+p {
+	font-size: 22px;
+}
 
 /*
     8. Create a root stacking context
@@ -134,4 +142,63 @@ h3 {
 #root,
 #__next {
 	isolation: isolate;
+}
+
+/* Table styling */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 20px 0;
+	font-size: 2rem;
+	text-align: left;
+}
+td:nth-child(2) {
+	font-size: 1.35em;
+}
+td:nth-child(1),
+td:nth-child(3) {
+	font-family: 'seg';
+}
+th:nth-child(4),
+td:nth-child(4) {
+	display: none;
+}
+
+/* Table header styling */
+table th {
+	background-color: #333;
+	color: white;
+	padding: 1rem 1.5rem;
+}
+
+/* Table body styling */
+table td {
+	padding: 1rem 1.5rem;
+	border-bottom: 1px solid var(--dark-blue);
+}
+
+table tr {
+	background-color: var(--secondary-white);
+	color: var(--dark-blue);
+}
+
+/* Hover effect on table rows */
+table tr:hover {
+	background-color: var(--dark-blue);
+	color: var(--secondary-white);
+	cursor: pointer;
+}
+
+/* Optional: Center-align the table on the page */
+#table {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Make table responsive */
+@media screen and (max-width: 600px) {
+	table {
+		font-size: 14px;
+	}
 }
