@@ -10,10 +10,11 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        // 1. Run the pinball game
-        // FIXME path
-        string pinballPath = Path.Combine(@"..\..\..\", "pinball", "pinball.exe");
+        // UPDATED CODE: Extract pinball.exe from embedded resources
+        string pinballPath = Path.Combine(Path.GetTempPath(), "pinball.exe");
+        ExtractResource("Resources.pinball.exe", pinballPath);
 
+        // Ensure pinball.exe is extracted and exists
         if (File.Exists(pinballPath))
         {
             // Run Pinball and wait for it to exit
@@ -45,6 +46,29 @@ class Program
             Console.WriteLine("Pinball executable not found. Make sure 'pinball.exe' is in the same directory.");
         }
     }
+
+    static void ExtractResource(string resourceName, string outputPath)
+    {
+        try
+        {
+            // Get the stream for the embedded resource
+            using Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+
+            if (stream == null)
+            {
+                Console.WriteLine("Resource not found: " + resourceName);
+                return;
+            }
+            // Create the output file stream and copy the resource content to it
+            using FileStream fileStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write);
+            stream.CopyTo(fileStream);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error extracting resource: {ex.Message}");
+        }
+    }
+
 
     static string GetRegistryValue(string keyName)
     {
