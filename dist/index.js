@@ -38,35 +38,53 @@ function fetchAndDisplayPlayerData() {
 
 		// Get the table container
 		const tableContainer = document.getElementById('table');
+		const searchInput = document.querySelector('#search input');
 
-		// Create table element
-		let table =
-			'<table><tr><th>Rank</th><th>Player Name</th><th>High Score</th><th>Timestamp</th></tr>';
+		// Function to filter and display the players
+		function displayFilteredPlayers(filterText = '') {
+			// Create table element
+			let table =
+				'<table><tr><th>Rank</th><th>Player Name</th><th>High Score</th><th>Timestamp</th></tr>';
 
-		// Sort the players by high score and loop through the data
-		let rank = 1;
-		const sortedPlayers = Object.values(players).sort(
-			(a, b) => b.high_score - a.high_score
-		);
+			// Sort the players by high score and filter by player name
+			let rank = 1;
+			const sortedPlayers = Object.values(players)
+				.sort((a, b) => b.high_score - a.high_score)
+				.filter((player) =>
+					player.username
+						.toLowerCase()
+						.includes(filterText.toLowerCase())
+				);
 
-		sortedPlayers.forEach((player) => {
-			const timestamp = player.timestamp
-				? new Date(player.timestamp).toLocaleString() // Format timestamp to a readable date and time
-				: 'N/A'; // Provide a default value if timestamp is missing
+			// Loop through the filtered data
+			sortedPlayers.forEach((player) => {
+				const timestamp = player.timestamp
+					? new Date(player.timestamp).toLocaleString() // Format timestamp to a readable date and time
+					: 'N/A'; // Provide a default value if timestamp is missing
 
-			table += `<tr>
-                        <td>${rank}</td>
-                        <td>${player.username}</td>
-                        <td>${player.high_score}</td>
-                        <td>${timestamp}</td>
-                      </tr>`;
-			rank++;
+				table += `<tr>
+                            <td>${rank}</td>
+                            <td>${player.username}</td>
+                            <td>${player.high_score}</td>
+                            <td>${timestamp}</td>
+                          </tr>`;
+				rank++;
+			});
+
+			table += '</table>';
+
+			// Insert the table into the table container
+			tableContainer.innerHTML = table;
+		}
+
+		// Initial display of all players
+		displayFilteredPlayers();
+
+		// Listen for input changes on the search field
+		searchInput.addEventListener('input', (event) => {
+			const searchText = event.target.value;
+			displayFilteredPlayers(searchText); // Call the filtering function with the current input
 		});
-
-		table += '</table>';
-
-		// Insert the table into the table container
-		tableContainer.innerHTML = table;
 	});
 }
 
