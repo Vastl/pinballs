@@ -68,7 +68,8 @@ function fetchAndDisplayPlayerData() {
 
 					const matchesAssociation =
 						!associationFilter ||
-						player.association === associationFilter;
+						player.association === associationFilter ||
+						player.association === 'MIX';
 
 					return matchesUsername && matchesAssociation;
 				});
