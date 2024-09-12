@@ -29,13 +29,32 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 		// Reference to the Realtime Database 'players' node
 		const playerRef = admin.database().ref(`/pimmelbude/players/${uuid}`);
 
-		// Write the high score to the database (update or insert)
-		await playerRef.set({
+		// Initialize association as undefined (so it won't be set if no pattern matches)
+		let association;
+
+		// Check for specific strings in the username and remove them
+		if (username.includes('#PML')) {
+			username = username.replace('#PML', '').trim(); // Remove #PML and trim whitespace
+			association = 'PML'; // Set association to PML
+		} else if (username.includes('#COM')) {
+			username = username.replace('#COM', '').trim(); // Remove #COM and trim whitespace
+			association = 'COM'; // Set association to COM
+		}
+
+		// Prepare the data object for update
+		const updateData = {
 			uuid: uuid,
 			username: username,
 			high_score: parseInt(high_score), // Ensure high_score is stored as an integer
 			timestamp: admin.database.ServerValue.TIMESTAMP, // Add a server-side timestamp
-		});
+		};
+		// Only add the association field if it was set (i.e., if #PML or #COM was found)
+		if (association) {
+			updateData.association = association;
+		}
+
+		// Write the data to the database (update or insert)
+		await playerRef.update(updateData);
 
 		console.log('200 OK');
 		// Send a success response with a cat for 200 OK
