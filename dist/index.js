@@ -40,8 +40,19 @@ function fetchAndDisplayPlayerData() {
 		const tableContainer = document.getElementById('table');
 		const searchInput = document.querySelector('#search input');
 
+		// Get the buttons for filtering by association
+		const pmlButton = document.getElementById('PML');
+		const allButton = document.getElementById('ALL');
+		const comButton = document.getElementById('COM');
+
+		// Variable to store the selected association filter
+		let selectedAssociation = '';
+
 		// Function to filter and display the players
-		function displayFilteredPlayers(filterText = '') {
+		function displayFilteredPlayers(
+			filterText = '',
+			associationFilter = ''
+		) {
 			// Create table element
 			let table =
 				'<table><tr><th>Rank</th><th>Player Name</th><th>Score</th><th class="hide-on-mobile">Timestamp</th></tr>';
@@ -50,11 +61,17 @@ function fetchAndDisplayPlayerData() {
 			let rank = 1;
 			const sortedPlayers = Object.values(players)
 				.sort((a, b) => b.high_score - a.high_score)
-				.filter((player) =>
-					player.username
+				.filter((player) => {
+					const matchesUsername = player.username
 						.toLowerCase()
-						.includes(filterText.toLowerCase())
-				);
+						.includes(filterText.toLowerCase());
+
+					const matchesAssociation =
+						!associationFilter ||
+						player.association === associationFilter;
+
+					return matchesUsername && matchesAssociation;
+				});
 
 			// Loop through the filtered data
 			sortedPlayers.forEach((player) => {
@@ -78,13 +95,48 @@ function fetchAndDisplayPlayerData() {
 			tableContainer.innerHTML = table;
 		}
 
-		// Initial display of all players
-		displayFilteredPlayers();
+		// Function to set the default players to be displayed based on the URL
+		function setDefaultAssociationByUrl() {
+			const hostname = window.location.hostname;
+
+			if (hostname.includes('pimmelbude.net')) {
+				selectedAssociation = 'PML'; // Default to PML players for pimmelbude.net
+				pmlButton.classList.add('active'); // Optional: Highlight the button
+			} else if (hostname.includes('churchofmarble.org')) {
+				selectedAssociation = 'COM'; // Default to COM players for churchofmarble.org
+				comButton.classList.add('active'); // Optional: Highlight the button
+			} else {
+				selectedAssociation = ''; // Default to showing all players for other URLs
+				allButton.classList.add('active'); // Optional: Highlight the button
+			}
+
+			// Display players based on the selected association
+			displayFilteredPlayers(searchInput.value, selectedAssociation);
+		}
+
+		// Initial display of players based on the URL
+		setDefaultAssociationByUrl();
 
 		// Listen for input changes on the search field
 		searchInput.addEventListener('input', (event) => {
 			const searchText = event.target.value;
-			displayFilteredPlayers(searchText); // Call the filtering function with the current input
+			displayFilteredPlayers(searchText, selectedAssociation); // Apply search and association filter
+		});
+
+		// Listen for button clicks to filter by association
+		pmlButton.addEventListener('click', () => {
+			selectedAssociation = 'PML'; // Filter for #PML players
+			displayFilteredPlayers(searchInput.value, selectedAssociation);
+		});
+
+		allButton.addEventListener('click', () => {
+			selectedAssociation = ''; // No filter, show all players
+			displayFilteredPlayers(searchInput.value, selectedAssociation);
+		});
+
+		comButton.addEventListener('click', () => {
+			selectedAssociation = 'COM'; // Filter for #COM players
+			displayFilteredPlayers(searchInput.value, selectedAssociation);
 		});
 	});
 }
