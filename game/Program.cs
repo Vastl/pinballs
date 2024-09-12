@@ -64,9 +64,9 @@ class Program
                 }
 
                 // 3. Close the program after uploading the scores or showing error messages
-                // Console.WriteLine("See you soon!");
-                Console.WriteLine("Press any key to close the program...");
-                Console.ReadKey();
+                Console.WriteLine("See you soon!");
+                // Console.WriteLine("Press any key to close the program...");
+                // Console.ReadKey();
                 // Ensure there's always something to await, even if nothing asynchronous is needed
                 await Task.CompletedTask;
             }
