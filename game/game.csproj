@@ -12,9 +12,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.8" />
     <EmbeddedResource Include="pinball\**" />
-    <None Update="apikey.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

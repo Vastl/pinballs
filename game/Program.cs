@@ -153,24 +153,27 @@ class Program
         string url = "https://scoretodb-ceks756yha-uc.a.run.app";
         string jsonData = "{\"uuid\":\"" + userUUID.ToString() + "\",\"username\":\"" + username + "\",\"high_score\":\"" + highScore + "\"}";
 
-        // Read the API key from the apikey.txt file
-        string apiKey = await File.ReadAllTextAsync("apikey.txt");
+        static async Task<string> ReadApiKey()
+        {
+            string apiKeyFilePath = Path.Combine(Path.GetTempPath(), "apikey.txt");
 
-        // Check if the API key was loaded
-        if (!string.IsNullOrWhiteSpace(apiKey))
-        {
-            Console.WriteLine("API key loaded successfully.");
-            Console.WriteLine($"Loaded API key: {apiKey}");
+            if (File.Exists(apiKeyFilePath))
+            {
+                return await File.ReadAllTextAsync(apiKeyFilePath);
+            }
+            else
+            {
+                throw new FileNotFoundException("API key file not found in the pinball directory.");
+            }
         }
-        else
-        {
-            Console.WriteLine("Failed to load API key.");
-        }
+
 
         using (HttpClient client = new HttpClient())
         {
             try
             {
+                string apiKey = await ReadApiKey();
+
                 // Add the API key to the Authorization header
                 client.DefaultRequestHeaders.Add("Authorization", apiKey);
                 
