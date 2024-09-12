@@ -6,8 +6,6 @@ exports.scoretodb = v2.https.onRequest(
 	{ cors: true, secrets: ['API_KEY'] },
 
 	async (req, res) => {
-		const API_KEY = process.env.API_KEY;
-
 		// Allow only POST requests
 		if (req.method !== 'POST') {
 			console.log('405 Method Not Allowed');
@@ -18,9 +16,10 @@ exports.scoretodb = v2.https.onRequest(
         `);
 		}
 
-		const requestApiKey = req.headers['Authorization'];
+		// If the API key is missing or incorrect, return a 403 Forbidden response
+		const API_KEY = process.env.API_KEY;
+		const requestApiKey = req.headers['authorization'];
 		if (!requestApiKey || requestApiKey !== API_KEY) {
-			// If the API key is missing or incorrect, return a 403 Forbidden response
 			console.log('403 Forbidden - Invalid API Key');
 			return res.status(403).send(`
 				<h1>403 - Forbidden</h1>
@@ -40,6 +39,7 @@ exports.scoretodb = v2.https.onRequest(
             <img src="https://http.cat/400" alt="400 - Bad Request">
         `);
 		}
+
 		// Escape the input values to prevent HTML injection
 		const escapedUsername = escapeHTML(username);
 		const escapedHighScore = escapeHTML(high_score.toString());

@@ -1,6 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using Microsoft.Win32;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 class Program
 {
     static async Task Main(string[] args) 
@@ -60,9 +64,9 @@ class Program
                 }
 
                 // 3. Close the program after uploading the scores or showing error messages
-                Console.WriteLine("See you soon!");
-                // Console.WriteLine("Press any key to close the program...");
-                // Console.ReadKey();
+                // Console.WriteLine("See you soon!");
+                Console.WriteLine("Press any key to close the program...");
+                Console.ReadKey();
                 // Ensure there's always something to await, even if nothing asynchronous is needed
                 await Task.CompletedTask;
             }
@@ -149,11 +153,27 @@ class Program
         string url = "https://scoretodb-ceks756yha-uc.a.run.app";
         string jsonData = "{\"uuid\":\"" + userUUID.ToString() + "\",\"username\":\"" + username + "\",\"high_score\":\"" + highScore + "\"}";
 
+        // Read the API key from the apikey.txt file
+        string apiKey = await File.ReadAllTextAsync("apikey.txt");
+
+        // Check if the API key was loaded
+        if (!string.IsNullOrWhiteSpace(apiKey))
+        {
+            Console.WriteLine("API key loaded successfully.");
+            Console.WriteLine($"Loaded API key: {apiKey}");
+        }
+        else
+        {
+            Console.WriteLine("Failed to load API key.");
+        }
 
         using (HttpClient client = new HttpClient())
         {
             try
             {
+                // Add the API key to the Authorization header
+                client.DefaultRequestHeaders.Add("Authorization", apiKey);
+                
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(url, content);
 
