@@ -25,6 +25,10 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
             <img src="https://http.cat/400" alt="400 - Bad Request">
         `);
 	}
+	// Escape the input values to prevent HTML injection
+	const escapedUsername = escapeHTML(username);
+	const escapedHighScore = escapeHTML(high_score.toString());
+
 	try {
 		// Reference to the Realtime Database 'players' node
 		const playerRef = admin.database().ref(`/pimmelbude/players/${uuid}`);
@@ -33,19 +37,19 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
 		let association;
 
 		// Check for specific strings in the username and remove them
-		if (username.includes('#PML')) {
-			username = username.replace('#PML', '').trim(); // Remove #PML and trim whitespace
+		if (escapedUsername.includes('#PML')) {
+			escapedUsername = escapedUsername.replace('#PML', '').trim(); // Remove #PML and trim whitespace
 			association = 'PML'; // Set association to PML
-		} else if (username.includes('#COM')) {
-			username = username.replace('#COM', '').trim(); // Remove #COM and trim whitespace
+		} else if (escapedUsername.includes('#COM')) {
+			escapedUsername = escapedUsername.replace('#COM', '').trim(); // Remove #COM and trim whitespace
 			association = 'COM'; // Set association to COM
 		}
 
 		// Prepare the data object for update
 		const updateData = {
 			uuid: uuid,
-			username: username,
-			high_score: parseInt(high_score), // Ensure high_score is stored as an integer
+			username: escapedUsername,
+			high_score: parseInt(escapedHighScore), // Ensure high_score is stored as an integer
 			timestamp: admin.database.ServerValue.TIMESTAMP, // Add a server-side timestamp
 		};
 		// Only add the association field if it was set (i.e., if #PML or #COM was found)
@@ -69,5 +73,19 @@ exports.scoretodb = v2.https.onRequest({ cors: true }, async (req, res) => {
             <h1>500 - Internal Server Error</h1>
             <img src="https://http.cat/500" alt="500 - Internal Server Error">
         `);
+	}
+
+	// Helper function to escape HTML characters
+	function escapeHTML(str) {
+		return str.replace(/[&<>"']/g, function (match) {
+			const escapeMap = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#39;',
+			};
+			return escapeMap[match];
+		});
 	}
 });
