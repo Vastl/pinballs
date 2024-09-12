@@ -9,17 +9,17 @@
 
 @font-face {
 	font-family: 'pixel';
-	src: url('/dist/assets/fs-tahoma-8px.otf');
+	src: url('/assets/fs-tahoma-8px.otf');
 }
 
 @font-face {
 	font-family: 'seg';
-	src: url('/dist/assets/DSEG7Classic-Bold.woff2');
+	src: url('/assets/DSEG7Classic-Bold.woff2');
 }
 
 @font-face {
 	font-family: 'tiny5';
-	src: url('/dist/assets/Tiny5-Regular.ttf');
+	src: url('/assets/Tiny5-Regular.ttf');
 }
 
 /*
