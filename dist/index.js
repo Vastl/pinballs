@@ -5,7 +5,6 @@ import {
 	ref,
 	onValue,
 } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js';
-import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-analytics.js';
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -22,7 +21,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 // Initialize Firebase Database
 const database = getDatabase(app);
@@ -141,6 +139,35 @@ function fetchAndDisplayPlayerData() {
 		});
 	});
 }
+
+function isMobileView() {
+	return window.matchMedia('(max-width: 768px)').matches;
+}
+
+// Function to remove elements with the 'hide-on-mobile' class
+function removeHideOnMobileElements() {
+	const elements = document.querySelectorAll('.hide-on-mobile');
+
+	elements.forEach((element) => {
+		if (isMobileView()) {
+			if (!element.hasAttribute('data-removed')) {
+				// Prevent multiple removals
+				element.parentNode.removeChild(element);
+				element.setAttribute('data-removed', 'true'); // Mark as removed
+			}
+		} else {
+			// Optional: Re-add elements if needed when not on mobile
+			// This requires storing the elements or their HTML beforehand
+		}
+	});
+}
+
+document.addEventListener('DOMContentLoaded', removeHideOnMobileElements);
+
+// Listen for window resize events
+window.addEventListener('resize', () => {
+	removeHideOnMobileElements();
+});
 
 // Call the function when the page loads
 window.onload = fetchAndDisplayPlayerData;
