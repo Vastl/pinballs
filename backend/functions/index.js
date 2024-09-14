@@ -36,12 +36,7 @@ exports.scoretodb = v2.https.onRequest(
 		const { uuid, username, high_score } = req.body;
 
 		// Validate the incoming data
-		if (
-			!uuid ||
-			!username ||
-			high_score === undefined ||
-			high_score === null
-		) {
+		if (!uuid || !username || !high_score) {
 			// 400 Bad Request
 			console.log('400 Bad Request - Missing required fields');
 			return res.status(400).json({
@@ -49,6 +44,12 @@ exports.scoretodb = v2.https.onRequest(
 				message: 'Bad Request - Missing required fields',
 				image: 'https://http.cat/400',
 			});
+		}
+
+		function isValidUUID(uuid) {
+			const uuidRegex =
+				/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+			return uuidRegex.test(uuid);
 		}
 
 		// Validate UUID format
@@ -61,6 +62,12 @@ exports.scoretodb = v2.https.onRequest(
 			});
 		}
 
+		function isValidHighScore(high_score) {
+			const score = parseInt(high_score, 10);
+			const MAX_SCORE = 125000000; // 125 million
+			return Number.isInteger(score) && score >= 0 && score <= MAX_SCORE;
+		}
+
 		// Validate high_score is a non-negative integer
 		if (!isValidHighScore(high_score)) {
 			console.log('400 Bad Request - Invalid high_score');
@@ -68,6 +75,20 @@ exports.scoretodb = v2.https.onRequest(
 				status: 400,
 				message: 'Bad Request - Invalid high_score',
 				image: 'https://http.cat/400',
+			});
+		}
+
+		// Helper function to escape HTML characters
+		function escapeHTML(str) {
+			return str.replace(/[&<>"']/g, function (match) {
+				const escapeMap = {
+					'&': '&amp;',
+					'<': '&lt;',
+					'>': '&gt;',
+					'"': '&quot;',
+					"'": '&#39;',
+				};
+				return escapeMap[match];
 			});
 		}
 
@@ -142,31 +163,6 @@ exports.scoretodb = v2.https.onRequest(
 				message: 'Internal Server Error',
 				image: 'https://http.cat/500',
 			});
-
-			function isValidUUID(uuid) {
-				const uuidRegex =
-					/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-				return uuidRegex.test(uuid);
-			}
-
-			function isValidHighScore(high_score) {
-				const score = parseInt(high_score, 10);
-				return Number.isInteger(score) && score >= 0;
-			}
-
-			// Helper function to escape HTML characters
-			function escapeHTML(str) {
-				return str.replace(/[&<>"']/g, function (match) {
-					const escapeMap = {
-						'&': '&amp;',
-						'<': '&lt;',
-						'>': '&gt;',
-						'"': '&quot;',
-						"'": '&#39;',
-					};
-					return escapeMap[match];
-				});
-			}
 		}
 	}
 );
