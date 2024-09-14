@@ -25,6 +25,30 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Database
 const database = getDatabase(app);
 
+// Function to check if the viewport is mobile-sized
+function isMobileView() {
+	return window.matchMedia('(max-width: 768px)').matches;
+}
+
+// Debounce function to limit how often a function is called
+function debounce(func, wait) {
+	let timeout;
+	return function (...args) {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(this, args), wait);
+	};
+}
+
+// Function to remove elements with the 'hide-on-mobile' class
+function removeHideOnMobileElements() {
+	if (isMobileView()) {
+		const elements = document.querySelectorAll('.hide-on-mobile');
+		elements.forEach((element) => {
+			element.parentNode.removeChild(element);
+		});
+	}
+}
+
 // Function to fetch and display player data in real-time
 function fetchAndDisplayPlayerData() {
 	// Get the reference to the 'players' node
@@ -36,6 +60,8 @@ function fetchAndDisplayPlayerData() {
 
 		// Get the table container
 		const tableContainer = document.getElementById('table');
+
+		// Get the search input
 		const searchInput = document.querySelector('#search input');
 
 		// Get the buttons for filtering by association
@@ -80,18 +106,20 @@ function fetchAndDisplayPlayerData() {
 				const formattedHighScore = player.high_score.toLocaleString();
 
 				table += `<tr>
-                            <td>${rank}</td>
-                            <td>${player.username}</td>
-                            <td>${formattedHighScore}</td>
-                            <td class="hide-on-mobile">${timestamp}</td>
-                          </tr>`;
+                    <td>${rank}</td>
+                    <td>${player.username}</td>
+                    <td>${formattedHighScore}</td>
+                    <td class="hide-on-mobile">${timestamp}</td>
+                  </tr>`;
 				rank++;
 			});
 
 			table += '</table>';
 
 			// Insert the table into the table container
-			tableContainer.innerHTML = table;
+			if (tableContainer) {
+				tableContainer.innerHTML = table;
+			}
 		}
 
 		// Function to set the default players to be displayed based on the URL
@@ -100,74 +128,66 @@ function fetchAndDisplayPlayerData() {
 
 			if (hostname.includes('pimmelbude.net')) {
 				selectedAssociation = 'PML'; // Default to PML players for pimmelbude.net
-				pmlButton.classList.add('active'); // Optional: Highlight the button
+				pmlButton?.classList.add('active'); // Optional: Highlight the button
 			} else if (hostname.includes('churchofmarble.org')) {
 				selectedAssociation = 'COM'; // Default to COM players for churchofmarble.org
-				comButton.classList.add('active'); // Optional: Highlight the button
+				comButton?.classList.add('active'); // Optional: Highlight the button
 			} else {
 				selectedAssociation = ''; // Default to showing all players for other URLs
-				allButton.classList.add('active'); // Optional: Highlight the button
+				allButton?.classList.add('active'); // Optional: Highlight the button
 			}
 
 			// Display players based on the selected association
-			displayFilteredPlayers(searchInput.value, selectedAssociation);
+			displayFilteredPlayers(
+				searchInput?.value || '',
+				selectedAssociation
+			);
 		}
 
 		// Initial display of players based on the URL
 		setDefaultAssociationByUrl();
 
 		// Listen for input changes on the search field
-		searchInput.addEventListener('input', (event) => {
+		searchInput?.addEventListener('input', (event) => {
 			const searchText = event.target.value;
 			displayFilteredPlayers(searchText, selectedAssociation); // Apply search and association filter
 		});
 
-		// Listen for button clicks to filter by association
-		pmlButton.addEventListener('click', () => {
+		// Listen for button clicks to filter by association using optional chaining
+		pmlButton?.addEventListener('click', () => {
 			selectedAssociation = 'PML'; // Filter for #PML players
-			displayFilteredPlayers(searchInput.value, selectedAssociation);
+			displayFilteredPlayers(
+				searchInput?.value || '',
+				selectedAssociation
+			);
 		});
 
-		allButton.addEventListener('click', () => {
+		allButton?.addEventListener('click', () => {
 			selectedAssociation = ''; // No filter, show all players
-			displayFilteredPlayers(searchInput.value, selectedAssociation);
+			displayFilteredPlayers(
+				searchInput?.value || '',
+				selectedAssociation
+			);
 		});
 
-		comButton.addEventListener('click', () => {
+		comButton?.addEventListener('click', () => {
 			selectedAssociation = 'COM'; // Filter for #COM players
-			displayFilteredPlayers(searchInput.value, selectedAssociation);
+			displayFilteredPlayers(
+				searchInput?.value || '',
+				selectedAssociation
+			);
 		});
 	});
 }
 
-function isMobileView() {
-	return window.matchMedia('(max-width: 768px)').matches;
-}
-
-// Function to remove elements with the 'hide-on-mobile' class
-function removeHideOnMobileElements() {
-	const elements = document.querySelectorAll('.hide-on-mobile');
-
-	elements.forEach((element) => {
-		if (isMobileView()) {
-			if (!element.hasAttribute('data-removed')) {
-				// Prevent multiple removals
-				element.parentNode.removeChild(element);
-				element.setAttribute('data-removed', 'true'); // Mark as removed
-			}
-		} else {
-			// Optional: Re-add elements if needed when not on mobile
-			// This requires storing the elements or their HTML beforehand
-		}
-	});
-}
-
-document.addEventListener('DOMContentLoaded', removeHideOnMobileElements);
-
-// Listen for window resize events
-window.addEventListener('resize', () => {
-	removeHideOnMobileElements();
+// Initialize functionalities when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+	removeHideOnMobileElements(); // Remove elements first
+	fetchAndDisplayPlayerData(); // Then initialize functionalities
 });
 
+// Listen for window resize events with debounce to improve performance
+window.addEventListener('resize', debounce(removeHideOnMobileElements, 250));
+
 // Call the function when the page loads
-window.onload = fetchAndDisplayPlayerData;
+// window.onload is already handled by DOMContentLoaded in this case

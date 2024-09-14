@@ -176,9 +176,9 @@ p {
 /* Table styling */
 #table {
 	z-index: 10;
-	min-height: 40%;
-	max-height: 60%;
 	width: 80%;
+	max-height: 70%;
+	margin-top: auto;
 	overflow: scroll;
 	display: flex;
 	flex-direction: column;
@@ -186,6 +186,7 @@ p {
 	align-items: center;
 	border-radius: 2rem;
 	background-color: var(--main-bg-col);
+	justify-self: end;
 }
 table {
 	margin-top: -1rem;
@@ -250,9 +251,7 @@ td:nth-child(3) {
 	justify-content: center;
 	align-items: start;
 	gap: 2rem;
-	height: 30%;
 	width: 80%;
-	margin-bottom: 2rem;
 }
 .moon {
 	height: 100%;
@@ -263,11 +262,13 @@ td:nth-child(3) {
 /* Make table responsive */
 @media screen and (max-width: 768px) {
 	#topper {
-		height: 30px;
-		margin: 0;
+		height: fit-content;
+		margin: 2rem 0;
+		padding: 0;
 	}
 	#table {
 		width: 100%;
+		max-height: 80%;
 	}
 	table {
 		overflow-x: scroll;
