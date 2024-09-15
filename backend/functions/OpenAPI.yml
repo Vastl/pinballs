@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+    title: Score to Database API
+    version: 1.0.0
+    description: An API to update a player's high score in the database.
+servers:
+    - url: https://scoretodb-ceks756yha-uc.a.run.app
+      description: Production server
+paths:
+    /:
+        post:
+            summary: Update player's high score
+            description: Updates the player's high score in the database.
+            operationId: updateHighScore
+            security:
+                - ApiKeyAuth: []
+            requestBody:
+                description: Player data that needs to be updated in the database.
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - uuid
+                                - username
+                                - high_score
+                            properties:
+                                uuid:
+                                    type: string
+                                    format: uuid
+                                    description: The player's UUID.
+                                    example: '123e4567-e89b-12d3-a456-426614174000'
+                                    pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$'
+                                username:
+                                    type: string
+                                    description: The player's username.
+                                    example: 'PlayerOne#PML'
+                                high_score:
+                                    type: integer
+                                    description: The player's high score.
+                                    example: 1000000
+                                    minimum: 0
+                                    maximum: 125000000
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: integer
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Success
+                                    image:
+                                        type: string
+                                        format: uri
+                                        example: 'https://http.cat/200'
+                '400':
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: integer
+                                        example: 400
+                                    message:
+                                        type: string
+                                        example: Bad Request - Missing required fields
+                                    image:
+                                        type: string
+                                        format: uri
+                                        example: 'https://http.cat/400'
+                '403':
+                    description: Forbidden - Invalid API Key
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: integer
+                                        example: 403
+                                    message:
+                                        type: string
+                                        example: Forbidden - Invalid API Key
+                                    image:
+                                        type: string
+                                        format: uri
+                                        example: 'https://http.cat/403'
+                '405':
+                    description: Method Not Allowed
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: integer
+                                        example: 405
+                                    message:
+                                        type: string
+                                        example: Method Not Allowed
+                                    image:
+                                        type: string
+                                        format: uri
+                                        example: 'https://http.cat/405'
+                '500':
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: integer
+                                        example: 500
+                                    message:
+                                        type: string
+                                        example: Internal Server Error
+                                    image:
+                                        type: string
+                                        format: uri
+                                        example: 'https://http.cat/500'
+components:
+    securitySchemes:
+        ApiKeyAuth:
+            type: apiKey
+            in: header
+            name: Authorization
+            description: API key needed to authorize requests.
