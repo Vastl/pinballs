@@ -1,8 +1,8 @@
-const v2 = require('firebase-functions/v2');
-const admin = require('firebase-admin');
+import { https } from 'firebase-functions/v2';
+import admin from 'firebase-admin';
 admin.initializeApp();
 
-exports.scoretodb = v2.https.onRequest(
+export const scoretodb = https.onRequest(
 	{
 		cors: ['https://pimmelbude.net', 'http://churchofmarble.org'],
 		secrets: ['API_KEY'],
@@ -131,28 +131,31 @@ exports.scoretodb = v2.https.onRequest(
 				});
 			}
 
-			// Prepare the data object for update
-			const updateData = {
-				uuid: uuid,
-				username: escapedUsername,
-				high_score: parseInt(escapedHighScore), // Ensure high_score is stored as an integer
-				timestamp: admin.database.ServerValue.TIMESTAMP, // Add a server-side timestamp
+			const newScore = {
+				score: parseInt(escapedHighScore),
+				timestamp: admin.database.ServerValue.TIMESTAMP,
 			};
 
-			// Only add the association field if it was set (i.e., if #PML or #COM was found)
-			if (association) {
-				updateData.association = association;
+			if (!existingData || !existingData.high_scores) {
+				await playerRef.update({
+					high_scores: [newScore],
+					uuid: uuid,
+					username: escapedUsername,
+				});
+			} else {
+				await playerRef.update({
+					high_scores: admin.database.ServerValue.increment(0), // Trigger update
+				});
+				await playerRef
+					.child('high_scores')
+					.set([newScore, ...existingData.high_scores]);
 			}
 
-			// Write the data to the database (update or insert)
-			await playerRef.update(updateData);
+			console.log('200 OK - High score added');
 
-			console.log('200 OK');
-
-			// Send a success response with a cat for 200 OK
 			return res.status(200).json({
 				status: 200,
-				message: 'Success',
+				message: 'High score added',
 				image: 'https://http.cat/200',
 			});
 		} catch (error) {

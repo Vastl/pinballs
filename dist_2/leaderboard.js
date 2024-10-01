@@ -39,16 +39,6 @@ function debounce(func, wait) {
 	};
 }
 
-// Function to remove elements with the 'hide-on-mobile' class
-function removeHideOnMobileElements() {
-	if (isMobileView()) {
-		const elements = document.querySelectorAll('.hide-on-mobile');
-		elements.forEach((element) => {
-			element.parentNode.removeChild(element);
-		});
-	}
-}
-
 // Function to fetch and display player data in real-time
 function fetchAndDisplayPlayerData() {
 	// Get the reference to the 'players' node
@@ -152,42 +142,10 @@ function fetchAndDisplayPlayerData() {
 			const searchText = event.target.value;
 			displayFilteredPlayers(searchText, selectedAssociation); // Apply search and association filter
 		});
-
-		// Listen for button clicks to filter by association using optional chaining
-		pmlButton?.addEventListener('click', () => {
-			selectedAssociation = 'PML'; // Filter for #PML players
-			displayFilteredPlayers(
-				searchInput?.value || '',
-				selectedAssociation
-			);
-		});
-
-		allButton?.addEventListener('click', () => {
-			selectedAssociation = ''; // No filter, show all players
-			displayFilteredPlayers(
-				searchInput?.value || '',
-				selectedAssociation
-			);
-		});
-
-		comButton?.addEventListener('click', () => {
-			selectedAssociation = 'COM'; // Filter for #COM players
-			displayFilteredPlayers(
-				searchInput?.value || '',
-				selectedAssociation
-			);
-		});
 	});
 }
 
 // Initialize functionalities when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-	removeHideOnMobileElements(); // Remove elements first
 	fetchAndDisplayPlayerData(); // Then initialize functionalities
 });
-
-// Listen for window resize events with debounce to improve performance
-window.addEventListener('resize', debounce(removeHideOnMobileElements, 250));
-
-// Call the function when the page loads
-// window.onload is already handled by DOMContentLoaded in this case

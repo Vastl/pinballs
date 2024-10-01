@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Vite App</title>
+	</head>
+	<body>
+		<section id="hero">
+			<img src="/hero_art.webp" alt="" />
+		</section>
+
+		<section class="container">
+			<div id="sidebar">
+				<div class="buttons">
+					<button>Button1</button>
+					<button>Button2</button>
+					<button>Button3</button>
+				</div>
+				<form action="#" method="post">
+					<label for="name">Name:</label>
+					<input
+						type="text"
+						id="name"
+						name="name"
+						placeholder="Your name.."
+						required
+					/>
+
+					<label for="email">Email:</label>
+					<input
+						type="email"
+						id="email"
+						name="email"
+						placeholder="Your email.."
+						required
+					/>
+
+					<label for="subject">Subject:</label>
+					<input
+						type="text"
+						id="subject"
+						name="subject"
+						placeholder="Subject.."
+						required
+					/>
+
+					<label for="message">Message:</label>
+					<textarea
+						id="message"
+						name="message"
+						placeholder="Write your message.."
+						style="height: 150px"
+						required
+					></textarea>
+
+					<button type="submit">Submit</button>
+				</form>
+			</div>
+
+			<main>
+				<div id="top3">
+					<!-- Example of one anime show card -->
+					<div class="top3-card">
+						<img
+							src="https://picsum.photos/180/320"
+							alt="Player's Image"
+						/>
+						<div class="top3-overlay">
+							<h3>Player name</h3>
+							<p class="abstract">High Score</p>
+						</div>
+					</div>
+					<!-- Example of one anime show card -->
+					<div class="top3-card">
+						<img
+							src="https://picsum.photos/180/321"
+							alt="Player's Image"
+						/>
+						<div class="top3-overlay">
+							<h3>Player name</h3>
+							<p class="abstract">High Score</p>
+						</div>
+					</div>
+					<!-- Example of one anime show card -->
+					<div class="top3-card">
+						<img
+							src="https://picsum.photos/181/320"
+							alt="Player's Image"
+						/>
+						<div class="top3-overlay">
+							<h3>Player name</h3>
+							<p class="abstract">High Score</p>
+						</div>
+					</div>
+				</div>
+				<div id="leaderboard">
+					<div id="search">
+						<input type="search" placeholder="Spieler filtern" />
+					</div>
+					<div id="table"></div>
+				</div>
+			</main>
+		</section>
+		<!--<div id="app"></div>-->
+		<script type="module" src="/main.js"></script>
+		<script type="module" src="./leaderboard.js"></script>
+	</body>
+</html>
