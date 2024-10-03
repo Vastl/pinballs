@@ -122,7 +122,7 @@ export const scoretodb = https.onRequest(
 			const existingData = snapshot.val();
 
 			// If the high_score already exists and is the same, don't update
-			if (existingData && existingData.high_score === escapedHighScore) {
+			if (existingData && existingData.high_score <= escapedHighScore) {
 				console.log('200 OK - Score already exists, no update needed');
 				return res.status(200).json({
 					status: 200,

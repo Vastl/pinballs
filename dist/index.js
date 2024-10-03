@@ -81,10 +81,37 @@ function fetchAndDisplayPlayerData() {
 			let table =
 				'<table><tr><th>Rank</th><th>Player Name</th><th>Score</th><th class="hide-on-mobile">Timestamp</th></tr>';
 
+			// Helper functions to get high score and timestamp
+			function getHighScore(x) {
+				if (typeof x.high_score !== 'undefined') {
+					return x.high_score;
+				} else if (
+					Array.isArray(x.high_scores) &&
+					x.high_scores.length > 0
+				) {
+					return x.high_scores[0].score;
+				} else {
+					return 0;
+				}
+			}
+
+			function getTimestamp(x) {
+				if (typeof x.timestamp !== 'undefined') {
+					return x.timestamp;
+				} else if (
+					Array.isArray(x.high_scores) &&
+					x.high_scores.length > 0
+				) {
+					return x.high_scores[0].timestamp;
+				} else {
+					return null;
+				}
+			}
+
 			// Sort the players by high score and filter by player name
 			let rank = 1;
 			const sortedPlayers = Object.values(players)
-				.sort((a, b) => b.high_score - a.high_score)
+				.sort((a, b) => getHighScore(b) - getHighScore(a))
 				.filter((player) => {
 					const matchesUsername = player.username
 						.toLowerCase()
@@ -100,17 +127,19 @@ function fetchAndDisplayPlayerData() {
 
 			// Loop through the filtered data
 			sortedPlayers.forEach((player) => {
-				const timestamp = player.timestamp
-					? new Date(player.timestamp).toLocaleString()
+				const timestampValue = getTimestamp(player);
+				const timestamp = timestampValue
+					? new Date(timestampValue).toLocaleString()
 					: 'N/A';
-				const formattedHighScore = player.high_score.toLocaleString();
+				const highScore = getHighScore(player);
+				const formattedHighScore = highScore.toLocaleString();
 
 				table += `<tr>
-                    <td>${rank}</td>
-                    <td>${player.username}</td>
-                    <td style="text-align: end;">${formattedHighScore}</td>
-                    <td class="hide-on-mobile">${timestamp}</td>
-                  </tr>`;
+							<td>${rank}</td>
+							<td>${player.username}</td>
+							<td style="text-align: end;">${formattedHighScore}</td>
+							<td class="hide-on-mobile">${timestamp}</td>
+						  </tr>`;
 				rank++;
 			});
 
